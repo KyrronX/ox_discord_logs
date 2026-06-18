@@ -14,7 +14,9 @@ It logs:
 
 - Item added  
 - Item removed  
+- Item transfers (player-to-player gives)  
 - Stash opened  
+- Loot accessed (drops / dead-body containers)  
 - Trunk opened  
 - Glovebox opened  
 - Player inventory opened  
@@ -72,33 +74,52 @@ ensure ox-discord-logs
 Inside `config.lua`:
 
 ```lua
+-- Main/Fallback webhook — used when a category webhook is not set
 Config.Webhook = "YOUR_WEBHOOK_HERE"
 
-Config.LogItemAdd = true
-Config.LogItemRemove = true
-Config.LogStash = true
-Config.LogTrunk = true
-Config.LogGlovebox = true
+-- Per-category webhooks (leave as "" to fall back to the main webhook)
+Config.WebhookInventoryAdd    = ""   -- inventory-add logs
+Config.WebhookInventoryRemove = ""   -- inventory-remove logs
+Config.WebhookItemTransfers   = ""   -- item-transfer logs
+Config.WebhookStash           = ""   -- stash-logs
+Config.WebhookLoot            = ""   -- loot-logs
+Config.WebhookTrunk           = ""   -- trunk-logs
+Config.WebhookGlovebox        = ""   -- glovebox-logs
+Config.WebhookPlayerInventory = ""   -- player inventory-open logs
+
+-- Toggle individual log types on/off
+Config.LogItemAdd         = true
+Config.LogItemRemove      = true
+Config.LogItemTransfer    = true
+Config.LogStash           = true
+Config.LogLoot            = true
+Config.LogTrunk           = true
+Config.LogGlovebox        = true
 Config.LogPlayerInventory = true
 
 Config.ServerName = "Your Server Name"
-Config.LogColor = 3447003
+Config.LogColor   = 3447003
 ```
 
-You can toggle any log type on/off.
+Each log category can be sent to its **own Discord channel** by setting the matching `WebhookXxx` value.  
+Any category left as `""` automatically falls back to the main `Config.Webhook`.
+
+You can also toggle any log type on/off independently.
 
 ---
 
 ## 📡 Logged Events
 
-| Event | Description |
-|-------|-------------|
-| `ox_inventory:itemAdded` | Logs when a player receives an item |
-| `ox_inventory:itemRemoved` | Logs when a player loses an item |
-| `ox_inventory:stashOpened` | Logs stash access |
-| `ox_inventory:trunkOpened` | Logs trunk access |
-| `ox_inventory:gloveboxOpened` | Logs glovebox access |
-| `ox_inventory:openedInventory` | Logs player inventory opening |
+| Event | Log Toggle | Webhook Config | Description |
+|-------|-----------|----------------|-------------|
+| `ox_inventory:itemAdded` | `LogItemAdd` | `WebhookInventoryAdd` | Player receives an item |
+| `ox_inventory:itemRemoved` | `LogItemRemove` | `WebhookInventoryRemove` | Player loses an item |
+| `ox_inventory:giveItem` | `LogItemTransfer` | `WebhookItemTransfers` | Player gives an item to another player |
+| `ox_inventory:stashOpened` | `LogStash` | `WebhookStash` | Stash access |
+| `ox_inventory:openedInventory` *(loot)* | `LogLoot` | `WebhookLoot` | Drop / dead-body inventory access |
+| `ox_inventory:trunkOpened` | `LogTrunk` | `WebhookTrunk` | Trunk access |
+| `ox_inventory:gloveboxOpened` | `LogGlovebox` | `WebhookGlovebox` | Glovebox access |
+| `ox_inventory:openedInventory` | `LogPlayerInventory` | `WebhookPlayerInventory` | Player inventory opening |
 
 ---
 
